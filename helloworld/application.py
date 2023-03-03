@@ -5,11 +5,28 @@ import optparse
 import os
 import openai
 import logging
+import boto3
+from botocore.exceptions import ClientError
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
+def get_api_key_from_secrets_manager() -> str:
+    secret_name = "openai-api-key"
+    region_name = "eu-west-1"
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+    try:
+        get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+    except ClientError as e:
+        raise e
+    secret = get_secret_value_response['SecretString']
+    return secret
+
 application = Flask(__name__)
-openai.api_key = os.getenv('OPENAI_API_KEY', None)
+openai.api_key = get_api_key_from_secrets_manager()
 
 @application.route('/completion', methods=['GET'])
 def get_completion():

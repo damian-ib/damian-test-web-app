@@ -7,7 +7,7 @@ phases:
   pre_build:
     commands:
       # Discover and run unit tests. For more information, see <https://docs.pytest.org/en/latest/goodpractices.html>
-      - pip install -r requirements.txt
+      - pip install -r requirements.txt # Install the dependencies in the app environment, this step needs to occur before test discovery as tests depend on app which depends on deps (returns import error during build)
       - python3 setup.py pytest
       - aws cloudformation package --template template.yml --s3-bucket $S3_BUCKET --output-template-file template-export.yml
 
