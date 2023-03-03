@@ -1,9 +1,16 @@
 #!flask/bin/python
 import json
-from flask import Flask, Response
+from flask import Flask, Response, request
 import optparse
+import os
 
 application = Flask(__name__)
+
+@application.route('/completion', methods=['GET'])
+def get_completion():
+    prompt = request.args.get('prompt')
+    response_data = {'Prompt': prompt, 'Env': os.getenv('MY_TEST_ENV_VAR', 'Could not find ENV variable')}
+    return Response(json.dumps(response_data), mimetype='application/json', status=200)
 
 @application.route('/', methods=['GET'])
 def get():
