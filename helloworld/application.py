@@ -9,11 +9,7 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 application = Flask(__name__)
-api_key = os.getenv('OPENAI_API_KEY', None)
-if api_key is None:
-    logging.error('OPENAI_API_KEY not found in environment variables.')
-    exit(1)
-openai.api_key = api_key
+openai.api_key = os.getenv('OPENAI_API_KEY', None)
 
 @application.route('/completion', methods=['GET'])
 def get_completion():
