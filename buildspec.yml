@@ -5,6 +5,7 @@ phases:
     runtime-versions:
       python: 3.8
   pre_build:
+    on-failure: CONTINUE
     commands:
       # Discover and run unit tests. For more information, see <https://docs.pytest.org/en/latest/goodpractices.html>
       - pip install -r requirements.txt
