@@ -4,13 +4,23 @@ from flask import Flask, Response, request
 import optparse
 import os
 import openai
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 application = Flask(__name__)
-openai.api_key = os.getenv('OPENAI_API_KEY', None)
+api_key = os.getenv('OPENAI_API_KEY', None)
+if api_key is None:
+    logging.error('OPENAI_API_KEY not found in environment variables.')
+    exit(1)
+openai.api_key = api_key
 
 @application.route('/completion', methods=['GET'])
 def get_completion():
     prompt = request.args.get('prompt')
+    if prompt is None:
+        return Response(json.dumps({'error': 'prompt is required'}), mimetype='application/json', status=400)
+    logging.info(f'Received completion request with prompt: {prompt}')
     completion = openai.Completion.create(
         model="text-davinci-003",
         prompt=prompt,
